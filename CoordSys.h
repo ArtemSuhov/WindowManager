@@ -36,7 +36,7 @@ public:
 	}
 
 private:
-	Point zeroPoint;
+	Point  zeroPoint;
 	Vector size;
 	Vector shift;
 	Vector scaleStep;

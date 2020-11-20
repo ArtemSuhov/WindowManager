@@ -110,7 +110,7 @@ public:
 	}
 
 private:
-	Point coords;
+	Point     coords;
 	const int arrowSize = 10;
 
 	void DrawVectorWithoutArrow(Point a) {
@@ -118,10 +118,10 @@ private:
 	}
 
 	void DrawArrow(Point a) {
-		Vector firstArrow = this->planeOrd();
+		Vector firstArrow  = this->planeOrd();
 		Vector secondArrow = this->planeOrd() * -1;
 
-		((firstArrow.normalize() + this->normalize()) * -arrowSize).DrawVectorWithoutArrow(a);
+		((firstArrow.normalize()  + this->normalize()) * -arrowSize).DrawVectorWithoutArrow(a);
 		((secondArrow.normalize() + this->normalize()) * -arrowSize).DrawVectorWithoutArrow(a);
 	}
 };
