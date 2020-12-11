@@ -7,8 +7,8 @@ typedef double(*MathPlot) (double x);
 
 class CoordSys : Plane {
 public:
-	CoordSys(Vector size, Vector xStep, Vector yStep, Point zeroPoint, Vector shift, Vector scaleStep)
-		: Plane(Vector(size.getX() + zeroPoint.x + shift.getX(), zeroPoint.y + shift.getY()), xStep, yStep) {
+	CoordSys(Point left, Vector size, Vector xStep, Vector yStep, Point zeroPoint, Vector shift, Vector scaleStep)
+		: Plane(left, Vector(size.getX() + zeroPoint.x + shift.getX(), zeroPoint.y + shift.getY()), xStep, yStep) {
 		this->zeroPoint = zeroPoint;
 		this->size.equalize(size);
 		this->shift.equalize(shift);

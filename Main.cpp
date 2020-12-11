@@ -1,73 +1,56 @@
 ﻿#include "pch.h"
-
 #include "Vector.h"
 #include "Plane.h"
 #include "CoordSys.h"
 #include "Buttons.h"
-
+#include "Ploter.h"
 #include "TXLib.h"
-
 #include <math.h>
 #include <iostream>
 #pragma once
 
 RGBQUAD*  Video_memory = NULL;
-CoordSys* GlobalCoord  = NULL;
 
-void drawSin() {
-	GlobalCoord->drawFunction(sin);
-}
-
-void drawCos() {
-	GlobalCoord->drawFunction(cos);
-}
-
-void drawTan() {
-	GlobalCoord->drawFunction(tan);
-}
-
-void clear() {
-	txSetFillColor ( TX_BLACK );
-	txClear		   (		  );
-	txSetColor     ( TX_WHITE );
-
-	GlobalCoord->drawAxes();
-}
 
 int main()
 {
-	Vector size       ( 700, 400 );
-	Vector xStep	  ( 1,   0   );
-	Vector yStep      ( 0,   1   );
-	Point  zeroOfAxis { 50,  650 };
-	Vector shift      ( 50,  50  );
-
 	Video_memory = txVideoMemory();
 
-	CoordSys coordSys ( size, xStep, yStep, zeroOfAxis, shift, Vector(0.002, 150) );
-	GlobalCoord = &coordSys;
+	Point  left  { 0  , 0   };
+	Vector size  ( 700, 400 );
+	Vector xStep ( 1  , 0   );
+	Vector yStep ( 0  , 1   );
 
-	txSetColor(TX_WHITE);
-	GlobalCoord->drawAxes();
+	HPEN pen = Win32::CreatePen(PS_DOT, 1, TX_RED);
 
-	const int count = 4;
-	Button		 sinButton ("SIN",   Point{ 100, 100 }, Vector( 50, 50 ), drawSin);
-	CircleButton cosButton ("COS",   Point{ 300, 100 }, Vector( 50, 50 ), drawCos);
-	OvalButton   tanButton ("TAN",   Point{ 500, 100 }, Vector( 50, 50 ), drawTan);
-	CloseButton  clrButton ("CLEAR", Point{ 700, 100 }, Vector( 50, 50 ), clear  );
+	txSelectObject(pen);
 
-	Button*       buttons[count] { &sinButton, &cosButton, &tanButton, &clrButton };
-	ButtonManager manager	     ( buttons, count );
+	Plane plane (left, size, xStep, yStep);
 
-	while (true) {
-		manager.draw();
+	HDC pencil = txLoadImage("Pencil.bmp");
+
+	txSetFillColor (    TX_WHITE    );
+	txRectangle    ( 0, 0, 700, 400 );
+	
+	Vector color(0, 0, 0);
+
+	while (!GetAsyncKeyState(VK_ESCAPE)) {
+		Point mouse { txMouseX(), txMouseY() };
+		txBitBlt(txDC(), mouse.x - 4, mouse.y - 32, 32, 32, pencil);
 
 		if (txMouseButtons() == 1) {
-			manager.press();
+			plane.drawRect ( mouse, color );
+		}
+		else if (txMouseButtons() == 2) {
+			plane.drawRect ( mouse, Vector(255, 255, 255) );
 		}
 
 		txSleep();
 	}
+
+	txDeleteDC(pencil);
 }
 
-//TODO: Класс менеджера кнопок, добавить функцию добавления кнопки в массив указателей кнопок (добавлять в динамический массив или большой статический).
+// Рисовать линию между текущей и прошлой точкой! Сплайн (пример скинули).
+// Два холста, ткслиб разобраться. И гашение мышки (txSetWindowsHook). Все есть в документации.
+// Рисование в виртуальном холсте (невидимый холст!)

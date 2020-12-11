@@ -4,9 +4,10 @@
 
 typedef void(*Action) ();
 
-struct Button {
+struct Button : Window{
 public:
 	Button(const char* name, Point position, Vector size, Action func) :
+		Window(position, size),
 		name_(name),
 		position_(position),
 		func_(func)
